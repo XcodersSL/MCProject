@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:firebase_auth101/services/firebase_auth_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+import 'package:http/http.dart' as http;
 
 import '../widgets/customized_button.dart';
 import '../widgets/customized_textfield.dart';
@@ -83,16 +87,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 textColor: Colors.white,
                 onPressed: () async {
                   try {
-                    await FirebaseAuthService().signup(
+                    await AuthService().signup(
+                        _usernameController.text.trim(),
                         _emailController.text.trim(),
                         _passwordController.text.trim());
-
                     if (!mounted) return;
 
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => const LoginScreen()));
-                  } on FirebaseException catch (e) {
-                    debugPrint(e.message);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const LoginScreen()));
+                  } on SocketException {
+                    print('No Internet connection 😑');
+                  } on HttpException {
+                    print("Couldn't find the post 😱");
+                  } on FormatException {
+                    print("Bad response format 👎");
                   }
 
                   // Navigator.push(context,

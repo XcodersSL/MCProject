@@ -97,15 +97,18 @@ class _LoginScreenState extends State<LoginScreen> {
                   // this try catch or add that code in catch block.
 
                   try {
-                    await FirebaseAuthService().login(
+                    var logresult = await AuthService().login(
                         _emailController.text.trim(),
                         _passwordController.text.trim());
-                    if (FirebaseAuth.instance.currentUser != null) {
+
+                    if (logresult[0]['username'] != null) {
                       if (!mounted) return;
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const HomeScreen()));
+                              builder: (context) => HomeScreen(
+                                  username: logresult[0]['username'],
+                                  userid: logresult[0]['id'])));
                     }
 
                     //  This code is gone inside the catch block
@@ -214,11 +217,11 @@ class _LoginScreenState extends State<LoginScreen> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const HomeScreen()));
+                                    builder: (context) => HomeScreen(
+                                        username: 'oilk', userid: '3')));
                           } else {
                             throw Exception("Error");
                           }
-                          
                         },
                       ),
                     ),
